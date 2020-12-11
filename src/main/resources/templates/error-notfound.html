@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Page Not Found</title>
+</head>
+<body>
+
+<h3> Requested Page not Found</h3>
+<hr>
+<p th:text="'Error Status: ' + ${error.status}"/>
+<p th:text="'Error message: ' + ${error.message}"/>
+<hr>
+<a th:href="@{/employees/list}">Back to Employee Directory</a>
+</body>
+</html>
