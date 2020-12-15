@@ -1,6 +1,6 @@
 package com.zemeso.springboot.thymeleafdemo.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,12 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="employee")
 public class Employee {
-
-	// define fields
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

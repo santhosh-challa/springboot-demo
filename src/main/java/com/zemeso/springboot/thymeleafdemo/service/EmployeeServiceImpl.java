@@ -8,6 +8,7 @@ import com.zemeso.springboot.thymeleafdemo.controller.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
+import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    @Autowired
+    @Autowired@Getter
     private ModelMapper myMapper;
 
     private EmployeeRepository employeeRepository;
@@ -30,6 +31,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeList = employeeRepository
                 .findAllByOrderByLastNameAsc();
 
+        System.out.println(employeeList.toString());
         List<EmployeeDTO> employeeDTOList = new ArrayList<>();
 
         for (Employee emp : employeeList) {
@@ -55,9 +57,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void save(EmployeeDTO theEmployee) {
+    public EmployeeDTO save(EmployeeDTO theEmployee) {
 
         employeeRepository.save(convertToEntity(theEmployee));
+        return theEmployee;
     }
 
     @Override
