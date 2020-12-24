@@ -3,7 +3,6 @@ package com.zemeso.springboot.thymeleafdemo;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
-import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ControllerLayerTests {
+class ControllerLayerTests {
     private MockMvc mockMvc;
 
     @Autowired
@@ -40,7 +39,7 @@ public class ControllerLayerTests {
     }
 
     @Test
-    public void listEmployeesTest() throws Exception {
+    void listEmployeesTest() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(
                 "/employees/list")).andExpect(status().isOk())
@@ -48,11 +47,11 @@ public class ControllerLayerTests {
                 .andReturn();
         verify(repository,times(1))
                 .findAllByOrderByLastNameAsc();
-        //assertEquals("list-employees", result.getResponse().getContentAsString());
+
     }
 
     @Test
-    public void addEmployeeTest() throws Exception {
+    void addEmployeeTest() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(
                 "/employees/showFormForAdd"))
@@ -62,7 +61,7 @@ public class ControllerLayerTests {
     }
 
     @Test
-    public void saveEmployeeTest() throws Exception {
+    void saveEmployeeTest() throws Exception {
 
         EmployeeDTO emp = new EmployeeDTO(1,
                 "Santhosh","Challa",
@@ -72,11 +71,10 @@ public class ControllerLayerTests {
                 .andExpect(view()
                         .name("redirect:/employees/list"))
                 .andReturn();
-        //verify(service,times(1)).save(emp);
     }
 
     @Test
-    public void updateEmployeeTest() throws Exception {
+    void updateEmployeeTest() throws Exception {
 
         Employee emp = new Employee(1,
                 "Santhosh123457","Challa",
@@ -93,7 +91,7 @@ public class ControllerLayerTests {
     }
 
     @Test
-    public void deleteEmployeeTest() throws Exception {
+    void deleteEmployeeTest() throws Exception {
 
         Employee emp = new Employee(1,
                 "Santhosh123457","Challa",
@@ -113,5 +111,4 @@ public class ControllerLayerTests {
                 .deleteById(emp.getId());
 
     }
-
 }

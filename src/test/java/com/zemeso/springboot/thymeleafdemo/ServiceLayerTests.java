@@ -1,9 +1,12 @@
 package com.zemeso.springboot.thymeleafdemo;
 
+import com.zemeso.springboot.thymeleafdemo.controller.EmployeeErrorResponse;
+import com.zemeso.springboot.thymeleafdemo.controller.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
 import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 class ServiceLayerTests {
-
 
     @Autowired
     private EmployeeService service;
@@ -59,6 +61,18 @@ class ServiceLayerTests {
                 employeeDTO.getLastName());
 	}
 
+    @Test()
+    void findByIdTestThrowsEmployeeNotFoundException() {
+
+        Assertions.assertThrows(EmployeeNotFoundException.class, () -> {
+            int theId =1;
+            // when(repository.findById(theId)).thenThrow
+            // (EmployeeNotFoundException.class);
+            service.findById(theId);
+        });
+    }
+
+
 	@Test
 	void saveEmployeeTest(){
 
@@ -78,4 +92,15 @@ class ServiceLayerTests {
         verify(repository,times(1)).deleteById(1);
     }
 
+    @Test
+    void employeeErrorResponseTest(){
+
+        EmployeeErrorResponse error = new EmployeeErrorResponse();
+        error.setMessage("Sample");
+        error.setStatus(404);
+        error.setTimeStamp(1234);
+        assertEquals("Sample", error.getMessage());
+        assertEquals(404, error.getStatus());
+        assertEquals(1234, error.getTimeStamp());
+    }
 }
