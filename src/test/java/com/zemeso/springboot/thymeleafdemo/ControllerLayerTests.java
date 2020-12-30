@@ -3,6 +3,7 @@ package com.zemeso.springboot.thymeleafdemo;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
+import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -17,6 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -25,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ControllerLayerTests {
+
     private MockMvc mockMvc;
 
     @Autowired
@@ -110,5 +115,24 @@ class ControllerLayerTests {
         verify(repository,times(1))
                 .deleteById(emp.getId());
 
+    }
+
+    @Test
+    void invalidEmployeeUpdateThrowsException() throws Exception {
+        int exceptionParam = 1000000;
+
+        when(repository.findById(exceptionParam)).
+                thenThrow(new EmployeeNotFoundException("employee not found."));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/employees/showFormForUpdate" +
+                "?employeeId=" + exceptionParam))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertTrue(result.getResolvedException
+                 () instanceof EmployeeNotFoundException))
+               .andExpect(result -> assertEquals("employee not found.",
+                        result.getResolvedException().getMessage()));
+
+        verify(repository, times(1)).findById(exceptionParam);
     }
 }
