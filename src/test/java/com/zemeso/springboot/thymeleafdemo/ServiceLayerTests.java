@@ -1,7 +1,7 @@
 package com.zemeso.springboot.thymeleafdemo;
 
-import com.zemeso.springboot.thymeleafdemo.controller.EmployeeErrorResponse;
-import com.zemeso.springboot.thymeleafdemo.controller.EmployeeNotFoundException;
+import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeErrorResponse;
+import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
@@ -95,12 +95,17 @@ class ServiceLayerTests {
     @Test
     void employeeErrorResponseTest(){
 
-        EmployeeErrorResponse error = new EmployeeErrorResponse();
-        error.setMessage("Sample");
-        error.setStatus(404);
-        error.setTimeStamp(1234);
-        assertEquals("Sample", error.getMessage());
+        EmployeeErrorResponse error = new
+                EmployeeErrorResponse(404, "sample"
+                , 1234);
+        assertEquals("sample", error.getMessage());
         assertEquals(404, error.getStatus());
         assertEquals(1234, error.getTimeStamp());
+        error.setMessage("error");
+        error.setStatus(400);
+        error.setTimeStamp(12345);
+        assertEquals("error", error.getMessage());
+        assertEquals(400, error.getStatus());
+        assertEquals(12345, error.getTimeStamp());
     }
 }

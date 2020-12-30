@@ -1,4 +1,4 @@
-package com.zemeso.springboot.thymeleafdemo.controller;
+package com.zemeso.springboot.thymeleafdemo.exceptions;
 
 public class EmployeeNotFoundException extends RuntimeException{
 
