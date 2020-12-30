@@ -1,14 +1,15 @@
-package com.zemeso.springboot.thymeleafdemo.service;
+package com.zemeso.springboot.thymeleafdemo.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.zemeso.springboot.thymeleafdemo.controller.EmployeeNotFoundException;
+import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
 
+import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

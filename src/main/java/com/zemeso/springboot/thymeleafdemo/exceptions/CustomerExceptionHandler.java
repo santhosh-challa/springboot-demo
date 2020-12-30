@@ -1,4 +1,4 @@
-package com.zemeso.springboot.thymeleafdemo.controller;
+package com.zemeso.springboot.thymeleafdemo.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
