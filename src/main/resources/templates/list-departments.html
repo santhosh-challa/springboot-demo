@@ -8,7 +8,9 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+          rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
 
     <title>Employee Directory</title>
 </head>
@@ -18,42 +20,36 @@
     <div class="container">
     <h3>Employee Directory</h3>
         <hr>
-        <h4>Employees</h4>
+        <h4>Departments</h4>
     <hr>
 
         <!-- Add a button -->
-        <a th:href="@{/employees/showFormForAdd}"
+        <a th:href="@{/departments/showFormForAdd}"
            class="btn btn-primary btn-sm mb-3">
-            Add Employee
+            Add Department
         </a>
     <table class="table table-bordered table-striped">
-    <caption>Employee Details</caption>
+    <caption>Department Details</caption>
         <thead class="thead-dark">
             <tr>
-                <th id="head1">First Name</th>
-                <th id="head2">Last Name</th>
-                <th id="head3">Email</th>
-                <th id="head4">Department</th>
-                <th id="head5">Action</th>
+                <th id="head">Department Name</th>
+                <th id="head1">Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr th:each="tempEmp : ${employees}" >
-                <td th:text="${tempEmp.firstName}" />
-                <td th:text="${tempEmp.lastName}" />
-                <td th:text="${tempEmp.email}" />
-                <td th:text="${tempEmp.department.deptName}" />
+            <tr th:each="tempDept : ${departments}" >
+                <td th:text="${tempDept.deptName}" />
 
                 <td>
                     <!-- add update button -->
-                    <a th:href="@{/employees/showFormForUpdate(employeeId=${tempEmp.id})}"
+                    <a th:href="@{/departments/showFormForUpdate(deptId=${tempDept.id})}"
                        class="btn btn-info btn-sm">
                         Update
                     </a>
                     <!-- add Delete button -->
-                    <a th:href="@{/employees/delete (employeeId=${tempEmp.id})}"
+                    <a th:href="@{/departments/delete (deptId=${tempDept.id})}"
                        class="btn btn-danger btn-sm"
-                       onclick="if (! (confirm('Are you sure you want to delete this employee?'))) return false">
+                       onclick="if (! (confirm('Are you sure you want to delete this department along with its employees?'))) return false">
                         Delete
                     </a>
 
@@ -62,7 +58,7 @@
         </tbody>
     </table>
         <hr>
-        <a th:href="@{/departments/list}">Departments List</a>
+        <a th:href="@{/employees/list}">Back to Employees List</a>
     </div>
 </body>
 

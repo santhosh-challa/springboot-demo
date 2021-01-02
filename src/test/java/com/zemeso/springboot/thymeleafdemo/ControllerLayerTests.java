@@ -2,6 +2,7 @@ package com.zemeso.springboot.thymeleafdemo;
 
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
+import com.zemeso.springboot.thymeleafdemo.entity.Department;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
 import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -131,7 +132,8 @@ class ControllerLayerTests {
                 .andExpect(result -> assertTrue(result.getResolvedException
                  () instanceof EmployeeNotFoundException))
                .andExpect(result -> assertEquals("employee not found.",
-                        result.getResolvedException().getMessage()));
+                        result.getResolvedException().getMessage())).andExpect(view().name(
+                "error-notfound"));
 
         verify(repository, times(1)).findById(exceptionParam);
     }

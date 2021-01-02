@@ -1,6 +1,8 @@
 package com.zemeso.springboot.thymeleafdemo.controller;
 
+import com.zemeso.springboot.thymeleafdemo.dto.DepartmentDTO;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
+import com.zemeso.springboot.thymeleafdemo.service.DepartmentService;
 import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,9 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @GetMapping("/list")
     public String listEmployees(Model theModel){
 
@@ -29,13 +34,18 @@ public class EmployeeController {
     public String addEmployee(Model theModel){
         // create model attribute to bind form data
         EmployeeDTO theEmployee = new EmployeeDTO();
+        List<DepartmentDTO> departments =departmentService.findAll();
+        DepartmentDTO theDepartment = new DepartmentDTO();
 
         theModel.addAttribute("employee", theEmployee);
+        theModel.addAttribute("departments", departments);
+        theModel.addAttribute("department", theDepartment);
         return "employee-form";
     }
 
     @PostMapping("/save")
-    public String saveEmployee(@ModelAttribute("employee") EmployeeDTO theEmployee){
+    public String saveEmployee(@ModelAttribute("employee")
+                                           EmployeeDTO theEmployee){
 
         employeeService.save(theEmployee);
 
@@ -48,7 +58,16 @@ public class EmployeeController {
                                     Model theModel) {
 
         EmployeeDTO theEmployee = employeeService.findById(theId);
+        DepartmentDTO theDepartment = new DepartmentDTO();
+        theDepartment.setId(theEmployee.getDepartment().getId());
+        theDepartment.setDeptName(theEmployee.getDepartment().getDeptName());
+        theEmployee.setDepartment(theDepartment);
+
+        List<DepartmentDTO> departments =departmentService.findAll();
+
+        theModel.addAttribute("departments", departments);
         theModel.addAttribute("employee", theEmployee);
+        theModel.addAttribute("department", theDepartment);
 
         return "employee-form";
     }
