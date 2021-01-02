@@ -22,19 +22,27 @@
     <p class="h4 mb-4">Save Employee</p>
 
     <form action="#" th:action="@{/employees/save}"
-          th:object="${employee}" method="POST">
+          method="POST">
 
         <!-- hidden field to handle update -->
-        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{employee.id}">
 
-        <input type="text" th:field="*{firstName}"
+        <input type="text" th:field="*{employee.firstName}"
                class="form-control mb-4 col-4" placeholder="First name">
 
-        <input type="text" th:field="*{lastName}"
+        <input type="text" th:field="*{employee.lastName}"
                class="form-control mb-4 col-4" placeholder="Last name">
 
-        <input type="text" th:field="*{email}"
+        <input type="text" th:field="*{employee.email}"
                class="form-control mb-4 col-4" placeholder="Email">
+
+        <select class="form-control mb-4 col-4"
+                th:field="${employee.department.id}"
+                id="dropOperator">
+            <option th:each="dept : ${departments}"
+                    th:value="${dept.id}"
+                    th:text="${dept.deptName}"></option>
+        </select>
 
         <button type="submit" class="btn btn-info col-2">Save</button>
 
