@@ -1,5 +1,7 @@
 package com.zemeso.springboot.thymeleafdemo;
 
+import com.zemeso.springboot.thymeleafdemo.dto.DepartmentDTO;
+import com.zemeso.springboot.thymeleafdemo.entity.Department;
 import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeErrorResponse;
 import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
@@ -34,24 +36,31 @@ class ServiceLayerTests {
     @Test
     void findAllTest() {
         List<Employee> employeeList = new ArrayList<>();
-        employeeList.add(new Employee(1, "santhosh",
-                "challa", "santhosh.chall@gmail.com"));
-        employeeList.add(new Employee(2, "Anil",
-                "dheram", "anil.chall@gmail.com"));
+        Employee emp1 = new Employee(1, "santhosh",
+                "challa", "santhosh.chall@gmail.com");
+        Employee emp2 = new Employee(2, "Anil",
+                "dheram", "anil.chall@gmail.com");
+        Department dept = new Department(1, "IT");
+        emp1.setDepartment(dept);
+        emp2.setDepartment(dept);
+        employeeList.add(emp1);
+        employeeList.add(emp2);
         when(repository.findAllByOrderByLastNameAsc()).thenReturn(employeeList);
-		assertEquals(2,
+        assertEquals(2,
                 service.findAll().size());
     }
 
-	@Test
-	void findByIdTest() {
-    	int theId =1;
-    	Employee emp = new Employee(1,
-                "Santhosh","Challa",
+    @Test
+    void findByIdTest() {
+        int theId = 1;
+        Employee emp = new Employee(1,
+                "Santhosh", "Challa",
                 "Santhosh.challa@gmail.com");
-		when(repository.findById(theId)).thenReturn(Optional.of(emp));
+        Department dept = new Department(1, "IT");
+        emp.setDepartment(dept);
+        when(repository.findById(theId)).thenReturn(Optional.of(emp));
         EmployeeDTO employeeDTO = service.findById(theId);
-		assertEquals(emp.getId(),
+        assertEquals(emp.getId(),
                 employeeDTO.getId());
         assertEquals(emp.getEmail(),
                 employeeDTO.getEmail());
@@ -59,41 +68,41 @@ class ServiceLayerTests {
                 employeeDTO.getFirstName());
         assertEquals(emp.getLastName(),
                 employeeDTO.getLastName());
-	}
+    }
 
     @Test()
     void findByIdTestThrowsEmployeeNotFoundException() {
 
         Assertions.assertThrows(EmployeeNotFoundException.class, () -> {
-            int theId =1;
-            // when(repository.findById(theId)).thenThrow
-            // (EmployeeNotFoundException.class);
+            int theId = 1;
             service.findById(theId);
         });
     }
 
 
-	@Test
-	void saveEmployeeTest(){
+    @Test
+    void saveEmployeeTest() {
 
         EmployeeDTO emp = new EmployeeDTO(1,
-                "Santhosh","Challa",
+                "Santhosh", "Challa",
                 "Santhosh.challa@gmail.com");
-        assertEquals(service.save(emp),emp);
+        DepartmentDTO dept = new DepartmentDTO(1, "IT");
+        emp.setDepartment(dept);
+        assertEquals(service.save(emp), emp);
     }
 
     @Test
-    void deleteEmployeeTest(){
+    void deleteEmployeeTest() {
 
         Employee emp = new Employee(1,
-                "Santhosh","Challa",
+                "Santhosh", "Challa",
                 "Santhosh.challa@gmail.com");
         service.deleteById(1);
-        verify(repository,times(1)).deleteById(1);
+        verify(repository, times(1)).deleteById(1);
     }
 
     @Test
-    void employeeErrorResponseTest(){
+    void employeeErrorResponseTest() {
 
         EmployeeErrorResponse error = new
                 EmployeeErrorResponse(404, "sample"
