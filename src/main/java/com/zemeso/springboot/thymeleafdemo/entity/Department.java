@@ -27,20 +27,6 @@ public class Department {
             CascadeType.ALL)
     private List<Employee> employees;
 
-    public void addEmployee(Employee emp){
-        if(employees == null){
-            employees = new ArrayList<>();
-        }
-
-        employees.add(emp);
-        emp.setDepartment(this);
-    }
-
-    public void removeEmployee(Employee emp){
-        employees.remove(emp);
-        emp.setDepartment(null);
-    }
-
     public Department(int id, String deptName) {
         this.id = id;
         this.deptName = deptName;
