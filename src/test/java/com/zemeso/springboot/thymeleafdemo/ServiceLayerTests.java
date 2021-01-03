@@ -186,7 +186,7 @@ class ServiceLayerTests {
         try {
             departmentService.findById(exceptionParam);
         } catch (EmployeeNotFoundException ex) {
-            assertEquals("Did not find Department id -"
+            assertEquals("Did not find Department id - "
                     + exceptionParam, ex.getMessage());
         }
     }
