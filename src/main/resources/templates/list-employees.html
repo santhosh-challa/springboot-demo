@@ -62,6 +62,40 @@
         </tbody>
     </table>
         <hr>
+        <!-- employees pagination -->
+        <nav aria-label="Pagination" th:if="${employees.totalPages gt 0}">
+            <ul class="pagination justify-content-center font-weight-medium">
+                <li class="page-item" th:classappend="${employees.number eq 0} ? 'disabled'">
+                    <a class="page-link svg-icon"
+                       th:href="@{/employees/list?page={id}(id=${employees.number lt 2 ? 1 : employees.number})}"
+                       aria-label="Previous" title="Previous Page" data-toggle="tooltip">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${i eq employees.number + 1} ? 'active'"
+                    th:each="i : ${#numbers.sequence( employees.number + 1, employees.totalPages > 5 + employees.number ? employees.number + 5 : employees.totalPages, 1)}">
+                    <a class="page-link"
+                       th:href="@{/employees/list?page={id}(id=${i})}"
+                       th:text="${i}"
+                       th:title="${'Page '+ i}" rel="tooltip"></a>
+                </li>
+                <li class="page-item disabled"
+                    th:if="${employees.number + 5 < employees.totalPages}">
+                    <a class="page-link svg-icon" href="#">
+                        <span data-feather="more-horizontal" width="20" height="20"></span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${employees.number + 1 eq employees.totalPages} ? 'disabled'">
+                    <a class="page-link svg-icon"
+                       th:href="@{/employees/list?page={id}(id=${employees.number + 2})}"
+                       aria-label="Next"
+                       title="Next Page" rel="tooltip">
+                        <span aria-hidden="true" data-feather="chevrons-right" width="20" height="20">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <hr>
         <a th:href="@{/departments/list}">Departments List</a>
     </div>
 </body>

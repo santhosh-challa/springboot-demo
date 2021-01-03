@@ -1,5 +1,6 @@
 package com.zemeso.springboot.thymeleafdemo;
 
+import com.zemeso.springboot.thymeleafdemo.dao.DepartmentRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.DepartmentDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Department;
 import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeErrorResponse;
@@ -7,13 +8,17 @@ import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.dao.EmployeeRepository;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Employee;
+import com.zemeso.springboot.thymeleafdemo.service.DepartmentService;
 import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -28,13 +33,19 @@ import static org.mockito.Mockito.*;
 class ServiceLayerTests {
 
     @Autowired
-    private EmployeeService service;
+    private EmployeeService employeeService;
 
     @MockBean
-    private EmployeeRepository repository;
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @MockBean
+    private DepartmentRepository departmentRepository;
 
     @Test
-    void findAllTest() {
+    void findAllEmployeeTest() {
         List<Employee> employeeList = new ArrayList<>();
         Employee emp1 = new Employee(1, "santhosh",
                 "challa", "santhosh.chall@gmail.com");
@@ -45,21 +56,27 @@ class ServiceLayerTests {
         emp2.setDepartment(dept);
         employeeList.add(emp1);
         employeeList.add(emp2);
-        when(repository.findAllByOrderByLastNameAsc()).thenReturn(employeeList);
+
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Employee> employeePages = new PageImpl<>(employeeList, pageable,
+                employeeList.size());
+
+        when(employeeRepository.findAll(PageRequest.of(0, 5)))
+                .thenReturn(employeePages);
         assertEquals(2,
-                service.findAll().size());
+                employeeService.findAll(0, 5).getTotalElements());
     }
 
     @Test
-    void findByIdTest() {
+    void employeeFindByIdTest() {
         int theId = 1;
         Employee emp = new Employee(1,
                 "Santhosh", "Challa",
                 "Santhosh.challa@gmail.com");
         Department dept = new Department(1, "IT");
         emp.setDepartment(dept);
-        when(repository.findById(theId)).thenReturn(Optional.of(emp));
-        EmployeeDTO employeeDTO = service.findById(theId);
+        when(employeeRepository.findById(theId)).thenReturn(Optional.of(emp));
+        EmployeeDTO employeeDTO = employeeService.findById(theId);
         assertEquals(emp.getId(),
                 employeeDTO.getId());
         assertEquals(emp.getEmail(),
@@ -71,12 +88,17 @@ class ServiceLayerTests {
     }
 
     @Test()
-    void findByIdTestThrowsEmployeeNotFoundException() {
+    void employeeFindByIdTestThrowsEmployeeNotFoundException() {
 
-        Assertions.assertThrows(EmployeeNotFoundException.class, () -> {
-            int theId = 1;
-            service.findById(theId);
-        });
+        int exceptionParam = 1000000;
+
+        when(employeeRepository.findById(exceptionParam)).
+                thenThrow(new EmployeeNotFoundException("employee not found."));
+        try {
+            employeeService.findById(exceptionParam);
+        } catch (EmployeeNotFoundException ex) {
+            assertEquals("employee not found.", ex.getMessage());
+        }
     }
 
 
@@ -88,7 +110,7 @@ class ServiceLayerTests {
                 "Santhosh.challa@gmail.com");
         DepartmentDTO dept = new DepartmentDTO(1, "IT");
         emp.setDepartment(dept);
-        assertEquals(service.save(emp), emp);
+        assertEquals(employeeService.save(emp), emp);
     }
 
     @Test
@@ -97,8 +119,8 @@ class ServiceLayerTests {
         Employee emp = new Employee(1,
                 "Santhosh", "Challa",
                 "Santhosh.challa@gmail.com");
-        service.deleteById(1);
-        verify(repository, times(1)).deleteById(1);
+        employeeService.deleteById(1);
+        verify(employeeRepository, times(1)).deleteById(1);
     }
 
     @Test
@@ -116,5 +138,69 @@ class ServiceLayerTests {
         assertEquals("error", error.getMessage());
         assertEquals(400, error.getStatus());
         assertEquals(12345, error.getTimeStamp());
+    }
+
+    @Test
+    void findAllDepartmentsTest() {
+        List<Department> departmentList = new ArrayList<>();
+
+        Department dept1 = new Department(1, "IT");
+        Department dept2 = new Department(2, "Admin");
+        departmentList.add(dept1);
+        departmentList.add(dept2);
+
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Department> deptPages = new PageImpl<>(departmentList,
+                pageable,
+                departmentList.size());
+
+        when(departmentRepository.findAll(PageRequest.of(0, 5)))
+                .thenReturn(deptPages);
+        assertEquals(2,
+                departmentService.findAll(0, 5).getTotalElements());
+    }
+
+    @Test
+    void departmentFindByIdTest() {
+        int theId = 1;
+
+        Department dept = new Department(1, "IT");
+        when(departmentRepository.findById(theId)).thenReturn(Optional.of(dept));
+        DepartmentDTO departmentDTO = departmentService.findById(theId);
+        assertEquals(dept.getId(),
+                departmentDTO.getId());
+        assertEquals(dept.getDeptName(),
+                departmentDTO.getDeptName());
+    }
+
+    @Test()
+    void departmentFindByIdTestThrowsEmployeeNotFoundException() {
+
+        int exceptionParam = 1000000;
+
+        when(departmentRepository.findById(exceptionParam)).
+                thenThrow(new EmployeeNotFoundException("department not found" +
+                        "."));
+        try {
+            departmentService.findById(exceptionParam);
+        } catch (EmployeeNotFoundException ex) {
+            assertEquals("department not found.", ex.getMessage());
+        }
+    }
+
+    @Test
+    void saveDepartmentTest() {
+
+        DepartmentDTO dept = new DepartmentDTO(1, "IT");
+        assertEquals(departmentService.save(dept), dept);
+    }
+
+    @Test
+    void deleteDepartmentTest() {
+
+        Department dept = new Department(1, "IT");
+        departmentService.deleteById(1);
+        verify(departmentRepository, times(1))
+                .deleteById(1);
     }
 }
