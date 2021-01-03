@@ -7,11 +7,14 @@ import com.zemeso.springboot.thymeleafdemo.exceptions.EmployeeNotFoundException;
 import com.zemeso.springboot.thymeleafdemo.service.DepartmentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -27,16 +30,21 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public Page<DepartmentDTO> findAll(int page, int size) {
+        Page<Department> departmentList = departmentRepository
+                .findAll(PageRequest.of(page,size));
+
+        return departmentList.map(this::convertToDTO);
+    }
+
+    @Override
     public List<DepartmentDTO> findAll() {
         List<Department> departmentList = departmentRepository
-                .findAllByOrderByDeptNameAsc();
+                .findAll();
 
-        List<DepartmentDTO> departmentDTOS = new ArrayList<>();
-
-        for (Department emp : departmentList) {
-            departmentDTOS.add(convertToDTO(emp));
-        }
-        return departmentDTOS;
+        return departmentList.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,18 +1,17 @@
 package com.zemeso.springboot.thymeleafdemo.service;
 
-import java.util.List;
-
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
+import org.springframework.data.domain.Page;
 
 
 public interface EmployeeService {
 
-	public List<EmployeeDTO> findAll();
+	Page<EmployeeDTO> findAll(int page, int size);
 	
-	public EmployeeDTO findById(int theId);
+	EmployeeDTO findById(int theId);
 	
-	public EmployeeDTO save(EmployeeDTO theEmployee);
+	EmployeeDTO save(EmployeeDTO theEmployee);
 	
-	public void deleteById(int theId);
+	void deleteById(int theId);
 	
 }

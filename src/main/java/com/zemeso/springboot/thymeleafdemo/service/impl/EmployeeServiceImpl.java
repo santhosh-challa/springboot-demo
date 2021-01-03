@@ -1,7 +1,5 @@
 package com.zemeso.springboot.thymeleafdemo.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import com.zemeso.springboot.thymeleafdemo.dto.DepartmentDTO;
@@ -14,8 +12,9 @@ import com.zemeso.springboot.thymeleafdemo.entity.Employee;
 import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -31,36 +30,32 @@ public class EmployeeServiceImpl implements EmployeeService {
     @PostConstruct
     private void initMapper() {
 
-        Converter<Employee, EmployeeDTO> myConverter = new Converter<Employee, EmployeeDTO>() {
-            public EmployeeDTO convert(MappingContext<Employee, EmployeeDTO> context) {
+        Converter<Employee, EmployeeDTO> myConverter = context -> {
 
-                Employee source = context.getSource();
-                EmployeeDTO destination = context.getDestination();
-                destination.setFirstName(source.getFirstName());
-                destination.setLastName(source.getLastName());
-                destination.setEmail(source.getEmail());
-                destination.setId(source.getId());
-                destination.getDepartment().setDeptName(source.getDepartment().getDeptName());
-                destination.getDepartment().setId(source.getDepartment().getId());
+            Employee source = context.getSource();
+            EmployeeDTO destination = context.getDestination();
+            destination.setFirstName(source.getFirstName());
+            destination.setLastName(source.getLastName());
+            destination.setEmail(source.getEmail());
+            destination.setId(source.getId());
+            destination.getDepartment().setDeptName(source.getDepartment().getDeptName());
+            destination.getDepartment().setId(source.getDepartment().getId());
 
-                return destination;
-            }
+            return destination;
         };
 
-        Converter<EmployeeDTO, Employee> myRevConverter = new Converter<EmployeeDTO, Employee>() {
-            public Employee convert(MappingContext<EmployeeDTO, Employee> context) {
+        Converter<EmployeeDTO, Employee> myRevConverter = context -> {
 
-                EmployeeDTO source = context.getSource();
-                Employee destination = context.getDestination();
-                destination.setFirstName(source.getFirstName());
-                destination.setLastName(source.getLastName());
-                destination.setEmail(source.getEmail());
-                destination.setId(source.getId());
-                destination.getDepartment().setDeptName(source.getDepartment().getDeptName());
-                destination.getDepartment().setId(source.getDepartment().getId());
+            EmployeeDTO source = context.getSource();
+            Employee destination = context.getDestination();
+            destination.setFirstName(source.getFirstName());
+            destination.setLastName(source.getLastName());
+            destination.setEmail(source.getEmail());
+            destination.setId(source.getId());
+            destination.getDepartment().setDeptName(source.getDepartment().getDeptName());
+            destination.getDepartment().setId(source.getDepartment().getId());
 
-                return destination;
-            }
+            return destination;
         };
 
         myMapper.addConverter(myConverter);
@@ -73,16 +68,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> findAll() {
-        List<Employee> employeeList = employeeRepository
-                .findAllByOrderByLastNameAsc();
+    public Page<EmployeeDTO> findAll(int page, int size) {
+        Page<Employee> employeeList = employeeRepository
+                .findAll(PageRequest.of(page, size));
 
-        List<EmployeeDTO> employeeDTOList = new ArrayList<>();
-
-        for (Employee emp : employeeList) {
-            employeeDTOList.add(convertToDTO(emp));
-        }
-        return employeeDTOList;
+        return employeeList.map(this::convertToDTO);
     }
 
     @Override
@@ -104,7 +94,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO save(EmployeeDTO theEmployee) {
 
         Employee emp = convertToEntity(theEmployee);
-        System.out.println("value of the dept id saving: " + theEmployee.getDepartment().getId());
         employeeRepository.save(emp);
         return theEmployee;
     }

@@ -3,11 +3,12 @@ package com.zemeso.springboot.thymeleafdemo.controller;
 import com.zemeso.springboot.thymeleafdemo.dto.DepartmentDTO;
 import com.zemeso.springboot.thymeleafdemo.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/departments")
@@ -17,16 +18,28 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @GetMapping("/list")
-    public String listDepartments(Model theModel){
+    public String listDepartments(HttpServletRequest request, Model theModel) {
 
-        List<DepartmentDTO> deptList = departmentService.findAll();
+        int page = 0;
+        int size = 5;
+
+        if (request.getParameter("page") != null &&
+                !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null
+                && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+        Page<DepartmentDTO> deptList = departmentService.findAll(page, size);
 
         theModel.addAttribute("departments", deptList);
         return "list-departments";
     }
 
     @GetMapping("/showFormForAdd")
-    public String addDepartment(Model theModel){
+    public String addDepartment(Model theModel) {
         // create model attribute to bind form data
         DepartmentDTO theDepartment = new DepartmentDTO();
 
@@ -36,7 +49,7 @@ public class DepartmentController {
 
     @PostMapping("/save")
     public String saveDepartment(@ModelAttribute("department")
-                                             DepartmentDTO theDepartment){
+                                         DepartmentDTO theDepartment) {
 
         departmentService.save(theDepartment);
 
@@ -55,7 +68,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam("deptId") int theId){
+    public String delete(@RequestParam("deptId") int theId) {
         departmentService.deleteById(theId);
 
         return "redirect:/departments/list";

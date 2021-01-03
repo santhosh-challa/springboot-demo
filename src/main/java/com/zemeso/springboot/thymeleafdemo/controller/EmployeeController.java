@@ -5,10 +5,12 @@ import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import com.zemeso.springboot.thymeleafdemo.service.DepartmentService;
 import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -22,9 +24,23 @@ public class EmployeeController {
     private DepartmentService departmentService;
 
     @GetMapping("/list")
-    public String listEmployees(Model theModel){
+    public String listEmployees(HttpServletRequest request, Model theModel){
 
-        List<EmployeeDTO> employeeList = employeeService.findAll();
+        int page = 0;
+        int size = 5;
+
+        if (request.getParameter("page") != null &&
+                !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null
+                && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+
+        Page<EmployeeDTO> employeeList =
+                employeeService.findAll(page,size);
 
         theModel.addAttribute("employees", employeeList);
         return "list-employees";
