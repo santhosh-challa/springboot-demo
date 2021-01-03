@@ -93,11 +93,13 @@ class ServiceLayerTests {
         int exceptionParam = 1000000;
 
         when(employeeRepository.findById(exceptionParam)).
-                thenThrow(new EmployeeNotFoundException("employee not found."));
+                thenThrow(new EmployeeNotFoundException("Did not find " +
+                        "employee id - " + exceptionParam));
         try {
             employeeService.findById(exceptionParam);
         } catch (EmployeeNotFoundException ex) {
-            assertEquals("employee not found.", ex.getMessage());
+            assertEquals("Did not find " +
+                    "employee id - " + exceptionParam, ex.getMessage());
         }
     }
 
@@ -179,12 +181,13 @@ class ServiceLayerTests {
         int exceptionParam = 1000000;
 
         when(departmentRepository.findById(exceptionParam)).
-                thenThrow(new EmployeeNotFoundException("department not found" +
-                        "."));
+                thenThrow(new EmployeeNotFoundException
+                        ("Did not find Department id - "+ exceptionParam));
         try {
             departmentService.findById(exceptionParam);
         } catch (EmployeeNotFoundException ex) {
-            assertEquals("department not found.", ex.getMessage());
+            assertEquals("Did not find Department id -"
+                    + exceptionParam, ex.getMessage());
         }
     }
 
