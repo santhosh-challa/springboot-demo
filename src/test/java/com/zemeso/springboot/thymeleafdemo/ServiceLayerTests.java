@@ -12,6 +12,7 @@ import com.zemeso.springboot.thymeleafdemo.service.DepartmentService;
 import com.zemeso.springboot.thymeleafdemo.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -75,8 +76,15 @@ class ServiceLayerTests {
                 "Santhosh.challa@gmail.com");
         Department dept = new Department(1, "IT");
         emp.setDepartment(dept);
+        EmployeeDTO empDTO = new EmployeeDTO(1,
+                "Santhosh", "Challa",
+                "Santhosh.challa@gmail.com");
+        DepartmentDTO deptDTO = new DepartmentDTO(1, "IT");
+        empDTO.setDepartment(deptDTO);
+
         when(employeeRepository.findById(theId)).thenReturn(Optional.of(emp));
         EmployeeDTO employeeDTO = employeeService.findById(theId);
+
         assertEquals(emp.getId(),
                 employeeDTO.getId());
         assertEquals(emp.getEmail(),
@@ -85,6 +93,8 @@ class ServiceLayerTests {
                 employeeDTO.getFirstName());
         assertEquals(emp.getLastName(),
                 employeeDTO.getLastName());
+        assertEquals(emp.getDepartment().getDeptName(),
+                employeeDTO.getDepartment().getDeptName());
     }
 
     @Test()
@@ -160,19 +170,6 @@ class ServiceLayerTests {
                 .thenReturn(deptPages);
         assertEquals(2,
                 departmentService.findAll(0, 5).getTotalElements());
-    }
-
-    @Test
-    void departmentFindByIdTest() {
-        int theId = 1;
-
-        Department dept = new Department(1, "IT");
-        when(departmentRepository.findById(theId)).thenReturn(Optional.of(dept));
-        DepartmentDTO departmentDTO = departmentService.findById(theId);
-        assertEquals(dept.getId(),
-                departmentDTO.getId());
-        assertEquals(dept.getDeptName(),
-                departmentDTO.getDeptName());
     }
 
     @Test()
