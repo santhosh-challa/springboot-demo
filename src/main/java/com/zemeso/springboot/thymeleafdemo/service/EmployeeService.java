@@ -3,10 +3,13 @@ package com.zemeso.springboot.thymeleafdemo.service;
 import com.zemeso.springboot.thymeleafdemo.dto.EmployeeDTO;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 
 public interface EmployeeService {
 
 	Page<EmployeeDTO> findAll(int page, int size);
+	List<EmployeeDTO> findEmpsByDept(int deptId);
 	
 	EmployeeDTO findById(int theId);
 	

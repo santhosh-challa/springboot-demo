@@ -46,6 +46,11 @@
                        class="btn btn-info btn-sm">
                         Update
                     </a>
+                    <!-- add list employees button -->
+                    <a th:href="@{/employees/byDeptId (deptId=${tempDept.id})}"
+                       class="btn btn-info btn-sm">
+                        Employees
+                    </a>
                     <!-- add Delete button -->
                     <a th:href="@{/departments/delete (deptId=${tempDept.id})}"
                        class="btn btn-danger btn-sm"

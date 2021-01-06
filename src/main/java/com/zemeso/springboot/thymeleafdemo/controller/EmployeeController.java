@@ -46,6 +46,17 @@ public class EmployeeController {
         return "list-employees";
     }
 
+    @GetMapping("/byDeptId")
+    public String getEmployesByDept(@RequestParam("deptId") int theId,
+                                    Model theModel){
+        List<EmployeeDTO> employeeDTOList =
+                employeeService.findEmpsByDept(theId);
+
+        theModel.addAttribute("employees", employeeDTOList);
+        return "list-dept-employees";
+
+    }
+
     @GetMapping("/showFormForAdd")
     public String addEmployee(Model theModel){
         // create model attribute to bind form data

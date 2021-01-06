@@ -1,6 +1,8 @@
 package com.zemeso.springboot.thymeleafdemo.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.zemeso.springboot.thymeleafdemo.dto.DepartmentDTO;
 import com.zemeso.springboot.thymeleafdemo.entity.Department;
@@ -73,6 +75,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .findAll(PageRequest.of(page, size));
 
         return employeeList.map(this::convertToDTO);
+    }
+
+    @Override
+    public List<EmployeeDTO> findEmpsByDept(int deptId) {
+
+        List<Employee> emps = employeeRepository.findByDepartmentId(deptId);
+        return emps.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
